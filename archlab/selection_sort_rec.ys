@@ -1,0 +1,105 @@
+#YUNUS EMRE UYAR 2546224
+.pos 0
+	irmovq stack, %rsp
+	irmovq head, %rdi
+	call selection_sort_rec
+	halt
+	
+selection_sort_rec:
+	rrmovq %rdi, %rax 
+	andq %rax, %rax
+	je return
+
+	rrmovq %rdi, %rsi # rsi=min = head
+	irmovq $0, %rdx # rdx = prevMin = NULL
+	rrmovq %rdi, %r8 # r8=curr = head
+
+forloop:
+	mrmovq 8(%r8), %r9 # r9 = curr-next
+	andq %r9,%r9
+	je ifelse
+
+	mrmovq (%r9), %r10 #curr next data = r10
+	mrmovq (%rsi), %r11 # min data = r11
+	cmpq %r11, %r10
+	jge nextiter
+	rrmovq %r8, %rdx
+	mrmovq 8(%r8), %rsi
+	
+
+nextiter:
+	mrmovq 8(%r8), %r8
+	jmp forloop
+	
+ifelse:
+	rrmovq %rsi, %r9
+	rrmovq %rdi, %r10
+	cmpq %r9,%r10
+	je recur
+	mrmovq 8(%rdi), %r11 # r11 = temp = head-next
+	mrmovq 8(%rsi), %r12 # r12 = min next
+	rmmovq %r12, 8(%rdi) # head next = min next
+
+	cmpq %rsi, %r11
+	je else
+	rmmovq %r11, 8(%rsi) # min next = temp
+	rmmovq %rdi, 8(%rdx) # prevmin next = head
+	jmp headupt
+else:
+
+	rmmovq %rdi, 8(%rsi)
+headupt:
+	rrmovq %rsi, %rdi
+
+recur:
+
+	rrmovq %rdi, %r13
+	mrmovq 8(%rdi), %rdi
+	pushq %r13
+	call selection_sort_rec
+	popq %r13
+	rmmovq %rax, 8(%r13) 
+returnhead:
+	rrmovq %r13, %rax
+	ret
+return:
+	rrmovq %rdi, %rax
+	ret
+	.pos 0x200
+head:
+	.quad 17
+	.quad node1
+node1:
+	.quad 24
+	.quad node2
+node2:
+	.quad 6
+	.quad node3
+node3:
+	.quad 11
+	.quad node4
+node4:
+	.quad 4
+	.quad node5
+node5:
+	.quad 5
+	.quad node6
+node6:
+	.quad 3
+	.quad node7
+node7:
+	.quad 40
+	.quad node8
+node8:
+	.quad 19
+	.quad node9
+node9:
+	.quad 52
+	.quad node10
+node10:
+	.quad 8
+	.quad 0 
+
+    .pos 0x400
+stack:
+	

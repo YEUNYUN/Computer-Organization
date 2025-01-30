@@ -1,0 +1,204 @@
+#/* $begin to_binary_string-ys */
+##################################################################
+# to_binary_string.ys - Convert an arr block of len integers to 
+# binary strings and store in buff
+# Return the sum of integers contained in arr.
+# Include your name and ID here.
+# Describe how and why you modified the baseline code.
+#Yunus Emre Uyar 2546224
+#First, I have moved some of the declarations outside the loop and deleted the unneccesary computations.
+#Then, I tried to use constants for the powers such as 128,64,32,16 .. 
+#then, after modifying and optimizing the jump instructions, the best 
+#I got was 225 CPE. Since there are only 6 cases in the inner loop and it's constant
+#I have opened it up and calculated manually. I have also used the cmpq function I've 
+#implemented before for seq. Although did not make much a difference.
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = arr, %rsi = buff, %rdx = len
+to_binary_string:
+##################################################################
+# You can modify this portion
+    # Loop header
+    xorq %rax,%rax    	     # sum = 0;
+	rrmovq %rsi, %r10       # temp = buff
+	
+    andq %rdx,%rdx    	     # len <= 0?
+    jle Done                # if so, goto Done:
+Loop:    
+    mrmovq (%rdi), %r9      # read val from arr...
+    
+	irmovq $8, %r8
+    addq %r9, %rax          # sum += val
+    
+    irmovq $128, %rcx       # power = 128
+
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	cmpq %rcx,%r9
+    
+	jl inner_updates                 # check if val < pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+
+  
+inner_updates:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++
+	
+    
+
+case64:
+	
+	irmovq $64, %rcx
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates1                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates1:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+case32:
+
+	irmovq $32, %rcx
+
+
+    rrmovq %rcx, %r8
+	cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates2                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates2:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+case16:
+
+	irmovq $16, %rcx
+
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates3      # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates3:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+
+case8:
+
+	irmovq $8, %rcx
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates4                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates4:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+
+case4:
+
+	irmovq $4, %rcx
+
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates5                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates5:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+case2:
+
+	irmovq $2, %rcx
+
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates6                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates6:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+
+case1:
+
+	irmovq $1, %rcx
+
+    rrmovq %rcx, %r8
+    cmpq %rcx,%r9
+    irmovq $48, %r8
+    rmmovq %r8, (%r10)     # *temp = '0'
+	jl inner_updates7                 # check if val >= pow
+    
+    irmovq $49, %r8         
+    rmmovq %r8, (%r10)      # *temp = '1'
+	subq %rcx, %r9          # val -= pow;
+
+  
+inner_updates7:  
+    irmovq $1, %r8
+    addq %r8, %r10         # temp++	
+	
+	
+
+
+updates:
+    irmovq $8,%r8
+	addq %r8, %rsi    	     # buff++
+	addq %r8, %rdi          #val++
+	irmovq $1, %r8
+    subq %r8, %rdx    	     # len--
+
+    
+    andq %rdx,%rdx    	     # len > 0?
+    jg Loop                 # if so, goto Loop
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+    ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end to_binary_string-ys */

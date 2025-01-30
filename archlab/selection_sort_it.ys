@@ -1,0 +1,101 @@
+#YUNUS EMRE UYAR 2546224
+.pos 0
+	irmovq stack, %rsp
+	irmovq head, %rdi
+	call selection_sort_it
+	halt
+
+
+selection_sort_it:
+	andq %rdi, %rdi # rdi head
+	je Done
+	mrmovq 8(%rdi), %r12
+	andq %r12, %r12
+	je Done
+	irmovq $0x0, %r14 
+outerloop:
+	andq %rdi, %rdi
+	je Done
+	rrmovq %rdi, %rsi #rsi max
+	irmovq $0x0, %rcx #rcx prevMax
+	rrmovq %rdi, %rdx #rdx curr
+	irmovq $0x0, %rbx #rbx prev
+
+innerloop:
+	mrmovq 8(%rdx), %rax
+	andq %rdx, %rdx
+	je afterinnerloop
+	mrmovq (%rdx), %rax #rax gets curr data
+	mrmovq (%rsi), %r8 #r8 gets max data
+	subq %r8,%rax
+	jle nochange
+	rrmovq %rdx,%rsi #max gets curr
+	rrmovq %rbx,%rcx # prevMax gets prev
+	
+nochange:
+	rrmovq %rdx,%rbx #prev gets curr
+	mrmovq 8(%rdx), %rdx # rdx gets curr-next
+	jmp innerloop
+	
+
+
+afterinnerloop:
+	rrmovq %rsi, %r9
+	rrmovq %rdi, %r10
+	subq %r9, %r10
+	jne else
+	mrmovq 8(%rsi), %rdi # head gets max-next
+	jmp last
+	
+else:
+	mrmovq 8(%rsi), %r11 #max next to r11
+	rmmovq %r11, 8(%rcx) # prevmax- next gets max-next
+
+last:
+	rmmovq %r14, 8(%rsi)
+	rrmovq %rsi,%r14
+	andq %rdi,%rdi
+	jne outerloop
+	rrmovq %r14,%rax
+	ret
+Done:
+	rrmovq %rdi, %rax
+	ret
+	
+	.pos 0x200
+head:
+	.quad 17
+	.quad node1
+node1:
+	.quad 24
+	.quad node2
+node2:
+	.quad 6
+	.quad node3
+node3:
+	.quad 11
+	.quad node4
+node4:
+	.quad 4
+	.quad node5
+node5:
+	.quad 5
+	.quad node6
+node6:
+	.quad 3
+	.quad node7
+node7:
+	.quad 40
+	.quad node8
+node8:
+	.quad 19
+	.quad node9
+node9:
+	.quad 52
+	.quad node10
+node10:
+	.quad 8
+	.quad 0 
+
+    .pos 0x2f0
+stack:

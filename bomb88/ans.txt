@@ -1,0 +1,7 @@
+Your phrase is: Good things take time.
+5 9 15 23 33 45
+2 2168 4
+21 8 DrEvil
+aaaaaa
+1 4 2 3 5 6
+40
